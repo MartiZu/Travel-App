@@ -1,20 +1,23 @@
 import Link from "next/link";
+import Image from "next/image";
 
 async function getTravels() {
   await new Promise((resolve) => setTimeout(resolve, 2000));
-  const response = await fetch("http://localhost:4000/travels", {
-    next: {
-      revalidate: 0,
+  const response = await fetch("http://localhost:4000/travel", {
+    method: "GET", // specify the HTTP method
+    headers: {
+      "Content-Type": "application/json", // specify the content type
     },
   });
-
-  const Travels = await response.json();
-
-  return travels;
+  //   console.log(response);
+  const travels = await response.json();
+  //   console.log(travels);
+  return travels.data;
 }
 
 export default async function TravelList() {
   const travels = await getTravels();
+  console.log(travels);
 
   return (
     <main className="flex flex-col justify-center items-center shrink-0">
@@ -24,23 +27,21 @@ export default async function TravelList() {
           key={travel.id}
         >
           <Link href={`/travels/${travel.id}`}>
-            <h2 className="font-bold text-xl">{travel.title}</h2>
+            <h2 className="font-bold text-xl">{travel.city}, {travel.country}</h2>
             <p>
-              {travel.author} - Room {travel.room}
+              {travel.best_time_to_visit}
             </p>
 
-            <p>{travel.description}</p>
-            <button
-              className={`${
-                travel.status === "open"
-                  ? "bg-green-500"
-                  : travel.status === "under review"
-                  ? "bg-yellow-600"
-                  : "bg-red-500"
-              } py-1 px-4 text-center`}
-            >
-              {travel.status}
-            </button>
+            <p>{travel.fun_fact}</p>
+            <p>{travel.not_to_miss}</p>
+            {/* <Image
+              src={travel.imglink}
+              alt="Vercel Logo"
+              className="dark:invert"
+              width={100}
+              height={24}
+              priority
+            /> */}
           </Link>
         </div>
       ))}
